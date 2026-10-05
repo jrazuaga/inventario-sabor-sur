@@ -1,5 +1,7 @@
 package com.sabordelsur.inventario.persistencia;
 
+import com.sabordelsur.inventario.excepciones.PersistenciaException;
+import com.sabordelsur.inventario.excepciones.ProductoNoEncontradoException;
 import com.sabordelsur.inventario.modelo.Categoria;
 import com.sabordelsur.inventario.modelo.Producto;
 
@@ -19,7 +21,7 @@ public class ProductoDAO {
             "FROM producto p JOIN categoria c ON c.id_categoria = p.id_categoria ";
 
     /** UC-11: listar el stock de todos los productos, agrupado por categoría. */
-    public List<Producto> listarTodos() throws SQLException {
+    public List<Producto> listarTodos() throws PersistenciaException {
         List<Producto> productos = new ArrayList<>();
         String sql = SELECT_BASE + "ORDER BY c.nombre, p.nombre";
         try (Connection con = ConexionBD.obtenerConexion();
@@ -28,25 +30,48 @@ public class ProductoDAO {
             while (rs.next()) {
                 productos.add(mapear(rs));
             }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al consultar los productos.", e);
         }
         return productos;
     }
 
-    public Producto buscarPorId(int idProducto) throws SQLException {
+    public Producto buscarPorId(int idProducto) throws PersistenciaException, ProductoNoEncontradoException {
         String sql = SELECT_BASE + "WHERE p.id_producto = ?";
         try (Connection con = ConexionBD.obtenerConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProducto);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next() ? mapear(rs) : null;
+                if (!rs.next()) {
+                    throw new ProductoNoEncontradoException(idProducto);
+                }
+                return mapear(rs);
             }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al buscar el producto.", e);
         }
     }
 
     /**
-     * Actualiza el stock_actual de un producto. Se usa desde MovimientoStockDAO dentro de una
-     * misma transacción, reutilizando la conexión que ya tiene abierta la transacción en curso.
+     * Lee el producto dentro de una transacción en curso y bloquea su fila (SELECT ... FOR UPDATE), de
+     * modo que dos operarios que registren movimientos del mismo producto al mismo tiempo no pisen
+     * el stock del otro (RNF-02).
      */
+    public Producto buscarPorIdBloqueando(Connection con, int idProducto)
+            throws SQLException, ProductoNoEncontradoException {
+        String sql = SELECT_BASE + "WHERE p.id_producto = ? FOR UPDATE";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idProducto);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    throw new ProductoNoEncontradoException(idProducto);
+                }
+                return mapear(rs);
+            }
+        }
+    }
+
+    /** Actualiza el stock_actual de un producto reutilizando la conexión de la transacción en curso. */
     public void actualizarStock(Connection con, int idProducto, int nuevoStock) throws SQLException {
         String sql = "UPDATE producto SET stock_actual = ? WHERE id_producto = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
