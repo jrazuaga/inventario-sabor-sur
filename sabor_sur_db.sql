@@ -72,7 +72,7 @@ CREATE TABLE producto_proveedor (
 CREATE TABLE usuario (
     id_usuario     INT AUTO_INCREMENT PRIMARY KEY,
     nombre_usuario VARCHAR(50) NOT NULL UNIQUE,
-    contrasena     VARCHAR(255) NOT NULL,
+    contrasena     CHAR(64) NOT NULL,  -- hash SHA-256 en hexadecimal
     id_rol         INT NOT NULL,
     CONSTRAINT fk_usuario_rol
         FOREIGN KEY (id_rol) REFERENCES rol(id_rol)
@@ -148,9 +148,9 @@ INSERT INTO producto_proveedor (id_producto, id_proveedor, precio, plazo_entrega
     (5, 3, 3100.00, 1, TRUE);
 
 INSERT INTO usuario (nombre_usuario, contrasena, id_rol) VALUES
-    ('propietario',  'hash_propietario', 1),
-    ('operario1',    'hash_operario1',   2),
-    ('operario2',    'hash_operario2',   2);
+    ('propietario',  '22ff14e9c4fae9f986aa56524c4a96628a5747bd81b9dfb2dad06ae1b7c64c05', 1),
+    ('operario1',    'ea66d0295003394ff7f847590fe43af491ded28bb3837d543d55dfa130c9b2f3', 2),
+    ('operario2',    'c2bcb4f3dd699c35c5f183ead7ac735441320c18b981374e72325eef6068dcd3', 2);
 
 INSERT INTO movimiento_stock (id_producto, id_usuario, fecha, id_tipo, cantidad) VALUES
     (1, 2, '2026-09-01 08:15:00', 1, 20),

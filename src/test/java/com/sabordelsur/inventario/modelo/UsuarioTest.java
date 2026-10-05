@@ -1,5 +1,6 @@
 package com.sabordelsur.inventario.modelo;
 
+import com.sabordelsur.inventario.seguridad.Hash;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,14 +13,20 @@ class UsuarioTest {
 
     @Test
     void iniciarSesion_esTrue_conCredencialesCorrectas() {
-        Usuario usuario = new Operador(2, "operario1", "hash_operario1");
-        assertTrue(usuario.iniciarSesion("hash_operario1"));
+        Usuario usuario = new Operador(2, "operario1", Hash.sha256("operario123"));
+        assertTrue(usuario.iniciarSesion("operario123"));
     }
 
     @Test
     void iniciarSesion_esFalse_conContrasenaIncorrecta() {
-        Usuario usuario = new Operador(2, "operario1", "hash_operario1");
+        Usuario usuario = new Operador(2, "operario1", Hash.sha256("operario123"));
         assertFalse(usuario.iniciarSesion("otra_contrasena"));
+    }
+
+    @Test
+    void iniciarSesion_esFalse_conContrasenaNula() {
+        Usuario usuario = new Operador(2, "operario1", Hash.sha256("operario123"));
+        assertFalse(usuario.iniciarSesion(null));
     }
 
     @Test

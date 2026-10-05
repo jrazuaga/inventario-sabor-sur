@@ -19,7 +19,7 @@ public class UsuarioDAO {
      */
     public Usuario autenticar(String nombreUsuario, String contrasena)
             throws CredencialesInvalidasException, PersistenciaException {
-        String sql = "SELECT u.id_usuario, u.nombre_usuario, u.contrasena, r.nombre AS rol " +
+        String sql = "SELECT u.id_usuario, u.nombre_usuario, u.contrasena AS hash_contrasena, r.nombre AS rol " +
                      "FROM usuario u JOIN rol r ON r.id_rol = u.id_rol " +
                      "WHERE u.nombre_usuario = ?";
         try (Connection con = ConexionBD.obtenerConexion();
@@ -33,7 +33,7 @@ public class UsuarioDAO {
                         Rol.valueOf(rs.getString("rol")),
                         rs.getInt("id_usuario"),
                         rs.getString("nombre_usuario"),
-                        rs.getString("contrasena"));
+                        rs.getString("hash_contrasena"));
                 if (!usuario.iniciarSesion(contrasena)) {
                     throw new CredencialesInvalidasException();
                 }

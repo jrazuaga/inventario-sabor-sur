@@ -22,9 +22,10 @@ inventario-sabor-sur/
     │   │                              Producto, Categoria, Proveedor, ProductoProveedor, PedidoReposicion, enums)
     │   ├── excepciones/              (InventarioException y sus subclases)
     │   ├── estructuras/              (ColaEnlazada y PilaEnlazada, implementadas con nodos)
+    │   ├── seguridad/                (Hash: SHA-256 de las contraseñas)
     │   ├── algoritmos/               (Ordenamiento: inserción y mezcla; Busqueda: binaria y lineal)
     │   └── persistencia/             (ConexionBD y un DAO por tabla, con JDBC)
-    └── test/java/...                 (45 pruebas JUnit 5)
+    └── test/java/...                 (48 pruebas JUnit 5)
 ```
 
 ## Requisitos
@@ -61,11 +62,11 @@ inventario-sabor-sur/
 
 5. Iniciar sesión con alguno de los usuarios de prueba que carga el script:
 
-   | Usuario       | Contraseña         | Rol            |
-   |---------------|--------------------|----------------|
-   | `propietario` | `hash_propietario` | Administrador  |
-   | `operario1`   | `hash_operario1`   | Operador       |
-   | `operario2`   | `hash_operario2`   | Operador       |
+   | Usuario       | Contraseña       | Rol            |
+   |---------------|------------------|----------------|
+   | `propietario` | `propietario123` | Administrador  |
+   | `operario1`   | `operario123`    | Operador       |
+   | `operario2`   | `operario456`    | Operador       |
 
    El menú que aparece depende del rol: el Administrador consulta, compara proveedores y supervisa la cola de
    reposición; el Operador consulta y registra movimientos de stock.

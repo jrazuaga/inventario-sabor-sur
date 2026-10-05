@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MovimientoStockTest {
 
     private final Producto producto = new Producto(1, "Aceite de girasol 5L", null, 12, 10);
-    private final Usuario usuario = new Operador(2, "operario1", "hash_operario1");
+    private final Usuario usuario = new Operador(2, "operario1", "x");
 
     @Test
     void getVariacionStock_esPositiva_paraUnaEntrada() {

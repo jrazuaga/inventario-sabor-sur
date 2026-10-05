@@ -13,8 +13,8 @@ public class Operador extends Usuario {
             OpcionMenu.REGISTRAR_MOVIMIENTO,
             OpcionMenu.VER_HISTORIAL_SESION));
 
-    public Operador(int id, String nombreUsuario, String contrasena) {
-        super(id, nombreUsuario, contrasena);
+    public Operador(int id, String nombreUsuario, String hashContrasena) {
+        super(id, nombreUsuario, hashContrasena);
     }
 
     @Override

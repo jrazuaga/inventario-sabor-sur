@@ -14,8 +14,8 @@ public class Administrador extends Usuario {
             OpcionMenu.VER_COLA_PEDIDOS,
             OpcionMenu.VER_PRODUCTOS_CRITICOS));
 
-    public Administrador(int id, String nombreUsuario, String contrasena) {
-        super(id, nombreUsuario, contrasena);
+    public Administrador(int id, String nombreUsuario, String hashContrasena) {
+        super(id, nombreUsuario, hashContrasena);
     }
 
     @Override
