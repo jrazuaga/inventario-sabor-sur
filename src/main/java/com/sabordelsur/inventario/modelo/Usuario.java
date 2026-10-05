@@ -1,66 +1,75 @@
 package com.sabordelsur.inventario.modelo;
 
-/** Representa a cada persona que accede al sistema (propietario u operario de depósito). */
-public class Usuario {
+import com.sabordelsur.inventario.seguridad.Hash;
 
-    private int id;
-    private String nombreUsuario;
-    private String contrasena;
-    private Rol rol;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.List;
 
-    public Usuario() {
-    }
+/**
+ * Representa a cada persona que accede al sistema. Es una clase abstracta: no existe un "usuario
+ * genérico", sino un Administrador o un Operador, y cada uno define qué opciones del menú puede usar.
+ * Los atributos son privados (encapsulamiento). De la contraseña solo se guarda su hash SHA-256 y no
+ * tiene getter: únicamente se compara dentro de la propia clase.
+ */
+public abstract class Usuario {
 
-    public Usuario(int id, String nombreUsuario, String contrasena, Rol rol) {
+    private final int id;
+    private final String nombreUsuario;
+    private final String hashContrasena;
+
+    protected Usuario(int id, String nombreUsuario, String hashContrasena) {
         this.id = id;
         this.nombreUsuario = nombreUsuario;
-        this.contrasena = contrasena;
-        this.rol = rol;
+        this.hashContrasena = hashContrasena;
+    }
+
+    /** Método de fábrica: devuelve la subclase que corresponde al rol almacenado en la base. */
+    public static Usuario crear(Rol rol, int id, String nombreUsuario, String hashContrasena) {
+        switch (rol) {
+            case ADMINISTRADOR:
+                return new Administrador(id, nombreUsuario, hashContrasena);
+            case OPERADOR:
+                return new Operador(id, nombreUsuario, hashContrasena);
+            default:
+                throw new IllegalArgumentException("Rol no soportado: " + rol);
+        }
     }
 
     /**
-     * UC-01: valida las credenciales ingresadas contra la contraseña almacenada.
-     * En este prototipo la comparación es directa; en un entorno productivo la contraseña
-     * se almacena con un algoritmo de hash (ej. BCrypt) y se compara el hash, nunca el texto plano.
+     * UC-01: valida la contraseña ingresada. Se calcula su SHA-256 y se lo compara con el hash
+     * almacenado. En un entorno productivo conviene un algoritmo con sal y costo ajustable (BCrypt o
+     * Argon2); aquí se usa SHA-256 para no agregar dependencias externas.
      */
     public boolean iniciarSesion(String contrasenaIngresada) {
-        return this.contrasena != null && this.contrasena.equals(contrasenaIngresada);
+        if (hashContrasena == null || contrasenaIngresada == null) {
+            return false;
+        }
+        byte[] guardado = hashContrasena.getBytes(StandardCharsets.UTF_8);
+        byte[] ingresado = Hash.sha256(contrasenaIngresada).getBytes(StandardCharsets.UTF_8);
+        return MessageDigest.isEqual(guardado, ingresado);
+    }
+
+    /** Rol del usuario. Lo define cada subclase. */
+    public abstract Rol getRol();
+
+    /** Opciones del menú que este tipo de usuario puede ejecutar. Lo define cada subclase. */
+    public abstract List<OpcionMenu> getOpcionesPermitidas();
+
+    public boolean puedeAcceder(OpcionMenu opcion) {
+        return getOpcionesPermitidas().contains(opcion);
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getNombreUsuario() {
         return nombreUsuario;
     }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
-
-    public String getContrasena() {
-        return contrasena;
-    }
-
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
-    }
-
-    public Rol getRol() {
-        return rol;
-    }
-
-    public void setRol(Rol rol) {
-        this.rol = rol;
-    }
-
     @Override
     public String toString() {
-        return nombreUsuario + " (" + rol + ")";
+        return nombreUsuario + " (" + getRol() + ")";
     }
 }

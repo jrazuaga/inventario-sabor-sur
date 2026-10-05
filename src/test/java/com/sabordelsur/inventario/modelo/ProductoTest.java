@@ -40,4 +40,27 @@ class ProductoTest {
         Producto producto = new Producto(3, "Harina 0000 x25kg", null, 20, 15);
         assertEquals(20, producto.consultarStock());
     }
+
+    @Test
+    void puedeDespachar_esTrue_soloSiHayUnidadesSuficientes() {
+        Producto producto = new Producto(3, "Harina 0000 x25kg", null, 20, 15);
+        assertTrue(producto.puedeDespachar(20));
+        assertFalse(producto.puedeDespachar(21));
+    }
+
+    @Test
+    void getNivelCriticidad_esMenorCuantoMasCercaDeCeroEstaElStock() {
+        Producto critico = new Producto(2, "Aceite de oliva 1L", null, 1, 5);
+        Producto holgado = new Producto(3, "Harina 0000 x25kg", null, 30, 15);
+        assertTrue(critico.getNivelCriticidad() < holgado.getNivelCriticidad());
+        assertEquals(0.2, critico.getNivelCriticidad(), 0.0001);
+    }
+
+    @Test
+    void compareTo_ordenaAlfabeticamenteSinDistinguirMayusculas() {
+        Producto a = new Producto(1, "aceite de oliva 1L", null, 1, 1);
+        Producto b = new Producto(2, "Harina 0000 x25kg", null, 1, 1);
+        assertTrue(a.compareTo(b) < 0);
+        assertTrue(b.compareTo(a) > 0);
+    }
 }

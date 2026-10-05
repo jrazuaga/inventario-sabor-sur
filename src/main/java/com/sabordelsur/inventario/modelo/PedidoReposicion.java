@@ -22,6 +22,16 @@ public class PedidoReposicion {
         this.estado = EstadoPedido.PENDIENTE;
     }
 
+    /** Indica si el pedido sigue en la cola, esperando ser gestionado. */
+    public boolean estaPendiente() {
+        return estado == EstadoPedido.PENDIENTE;
+    }
+
+    /** UC-10: marca el pedido como resuelto, retirándolo de la cola de pendientes. */
+    public void resolver() {
+        this.estado = EstadoPedido.RESUELTO;
+    }
+
     public int getId() {
         return id;
     }

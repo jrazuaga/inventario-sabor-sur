@@ -3,8 +3,9 @@ package com.sabordelsur.inventario.modelo;
 /**
  * Representa cada ítem del catálogo de la distribuidora (ej.: un tipo de aceite, harina o descartable).
  * Concentra la categoría a la que pertenece y el nivel de stock actual frente al umbral mínimo definido.
+ * Implementa Comparable para que pueda ordenarse y buscarse por nombre (ver paquete algoritmos).
  */
-public class Producto {
+public class Producto implements Comparable<Producto> {
 
     private int id;
     private String nombre;
@@ -30,8 +31,7 @@ public class Producto {
 
     /**
      * Aplica una variación de stock (positiva para ENTRADA, negativa para SALIDA) sobre el stock actual.
-     * La persistencia y el disparo de los pedidos de reposición (UC-09/UC-10) se resuelven en la capa DAO,
-     * ya que requieren acceso a la base de datos.
+     * La persistencia y el disparo de los pedidos de reposición (UC-09/UC-10) se resuelven en la capa DAO.
      */
     public void actualizarStock(int cantidad) {
         this.stockActual += cantidad;
@@ -40,6 +40,28 @@ public class Producto {
     /** Indica si, con el stock actual, corresponde generar un pedido de reposición (UC-09). */
     public boolean estaPorDebajoDelMinimo() {
         return stockActual < stockMinimo;
+    }
+
+    /** Indica si hay unidades suficientes para despachar la cantidad pedida. */
+    public boolean puedeDespachar(int cantidad) {
+        return stockActual >= cantidad;
+    }
+
+    /**
+     * Relación entre el stock actual y el mínimo: un valor menor a 1 indica que el producto está
+     * por debajo del umbral, y cuanto más bajo, más crítica es la situación.
+     */
+    public double getNivelCriticidad() {
+        if (stockMinimo <= 0) {
+            return Double.POSITIVE_INFINITY;
+        }
+        return (double) stockActual / stockMinimo;
+    }
+
+    /** Orden natural: alfabético por nombre, sin distinguir mayúsculas de minúsculas. */
+    @Override
+    public int compareTo(Producto otro) {
+        return String.CASE_INSENSITIVE_ORDER.compare(nombre, otro.nombre);
     }
 
     public int getId() {
