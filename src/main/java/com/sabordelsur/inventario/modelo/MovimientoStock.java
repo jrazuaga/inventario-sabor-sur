@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * stock y su regla propia de validación. La validación completa sigue el patrón "método plantilla":
  * validar() fija los pasos y las subclases completan el paso específico.
  */
-public abstract class MovimientoStock {
+public abstract class MovimientoStock implements Validable {
 
     private int id;
     private final Producto producto;
@@ -27,7 +27,8 @@ public abstract class MovimientoStock {
     }
 
     /** Método de fábrica: devuelve la subclase que corresponde al tipo de movimiento pedido. */
-    public static MovimientoStock crear(TipoMovimiento tipo, Producto producto, Usuario usuario, int cantidad) {
+    public static MovimientoStock crear(TipoMovimiento tipo, Producto producto, Usuario usuario,
+                                        int cantidad) {
         switch (tipo) {
             case ENTRADA:
                 return new MovimientoEntrada(producto, usuario, cantidad);
@@ -48,6 +49,7 @@ public abstract class MovimientoStock {
     protected abstract void validarReglaPropia() throws InventarioException;
 
     /** Valida el movimiento: primero la cantidad (común a todos) y luego la regla propia del tipo. */
+    @Override
     public final void validar() throws InventarioException {
         if (cantidad <= 0) {
             throw new CantidadInvalidaException(cantidad);

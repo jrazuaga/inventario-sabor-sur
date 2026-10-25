@@ -1,13 +1,17 @@
 -- ============================================================
 -- Sistema de Gestión de Inventario y Reposición
 -- Distribuidora Sabor Sur S.R.L.
--- Script de base de datos MySQL — Trabajo Práctico 3 (versión normalizada)
+-- Script de base de datos MySQL — Trabajo Práctico 4 (versión final integradora)
 -- Alumno: Julián Azuaga
 --
 -- Cambios respecto del TP2:
 --   * Los valores fijos (rol, tipo de movimiento, estado de pedido) pasan de columnas ENUM a tablas
 --     catálogo referenciadas por clave foránea (normalización).
 --   * producto_proveedor incorpora plazo_entrega_dias, requerido por RF-03 / UC-05.
+-- Cambios respecto del TP3:
+--   * Restricciones UNIQUE sobre los nombres de categoría, producto y proveedor (evitan duplicados
+--     desde la gestión de datos maestros: UC-02 y UC-03).
+--   * Restricciones CHECK sobre stock, precio, plazo y cantidad (MySQL 8.0.16 o posterior las aplica).
 -- ============================================================
 
 DROP DATABASE IF EXISTS sabor_sur_db;
@@ -37,22 +41,24 @@ CREATE TABLE estado_pedido (
 -- Tablas del negocio
 CREATE TABLE categoria (
     id_categoria INT AUTO_INCREMENT PRIMARY KEY,
-    nombre       VARCHAR(100) NOT NULL
+    nombre       VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE TABLE producto (
     id_producto   INT AUTO_INCREMENT PRIMARY KEY,
-    nombre        VARCHAR(100) NOT NULL,
+    nombre        VARCHAR(100) NOT NULL UNIQUE,
     id_categoria  INT NOT NULL,
     stock_actual  INT NOT NULL DEFAULT 0,
     stock_minimo  INT NOT NULL DEFAULT 0,
+    CONSTRAINT chk_producto_stock  CHECK (stock_actual >= 0),
+    CONSTRAINT chk_producto_minimo CHECK (stock_minimo >= 0),
     CONSTRAINT fk_producto_categoria
         FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria)
 );
 
 CREATE TABLE proveedor (
     id_proveedor INT AUTO_INCREMENT PRIMARY KEY,
-    nombre       VARCHAR(100) NOT NULL,
+    nombre       VARCHAR(100) NOT NULL UNIQUE,
     contacto     VARCHAR(150)
 );
 
@@ -63,6 +69,8 @@ CREATE TABLE producto_proveedor (
     plazo_entrega_dias INT NOT NULL,
     disponible         BOOLEAN NOT NULL DEFAULT TRUE,
     PRIMARY KEY (id_producto, id_proveedor),
+    CONSTRAINT chk_pp_precio CHECK (precio > 0),
+    CONSTRAINT chk_pp_plazo  CHECK (plazo_entrega_dias >= 0),
     CONSTRAINT fk_pp_producto
         FOREIGN KEY (id_producto) REFERENCES producto(id_producto),
     CONSTRAINT fk_pp_proveedor
@@ -85,6 +93,7 @@ CREATE TABLE movimiento_stock (
     fecha         DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_tipo       INT NOT NULL,
     cantidad      INT NOT NULL,
+    CONSTRAINT chk_mov_cantidad CHECK (cantidad > 0),
     CONSTRAINT fk_mov_producto
         FOREIGN KEY (id_producto) REFERENCES producto(id_producto),
     CONSTRAINT fk_mov_usuario

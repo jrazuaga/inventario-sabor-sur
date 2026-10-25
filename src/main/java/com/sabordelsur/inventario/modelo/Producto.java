@@ -1,11 +1,16 @@
 package com.sabordelsur.inventario.modelo;
 
+import com.sabordelsur.inventario.excepciones.DatoInvalidoException;
+
 /**
  * Representa cada ítem del catálogo de la distribuidora (ej.: un tipo de aceite, harina o descartable).
  * Concentra la categoría a la que pertenece y el nivel de stock actual frente al umbral mínimo definido.
- * Implementa Comparable para que pueda ordenarse y buscarse por nombre (ver paquete algoritmos).
+ * Implementa Comparable para que pueda ordenarse y buscarse por nombre (ver paquete algoritmos) y
+ * Validable para verificar sus datos antes de guardarse (UC-02).
  */
-public class Producto implements Comparable<Producto> {
+public class Producto implements Comparable<Producto>, Validable {
+
+    public static final int LARGO_MAXIMO_NOMBRE = 100;
 
     private int id;
     private String nombre;
@@ -56,6 +61,31 @@ public class Producto implements Comparable<Producto> {
             return Double.POSITIVE_INFINITY;
         }
         return (double) stockActual / stockMinimo;
+    }
+
+    /** Estado del stock (sin stock, bajo el mínimo o normal), usado en la interfaz y en los reportes. */
+    public EstadoStock getEstadoStock() {
+        return EstadoStock.de(stockActual, stockMinimo);
+    }
+
+    /** UC-02: reglas que debe cumplir un producto antes de darse de alta o modificarse. */
+    @Override
+    public void validar() throws DatoInvalidoException {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new DatoInvalidoException("El nombre del producto es obligatorio.");
+        }
+        if (nombre.trim().length() > LARGO_MAXIMO_NOMBRE) {
+            throw new DatoInvalidoException("El nombre del producto admite hasta " + LARGO_MAXIMO_NOMBRE + " caracteres.");
+        }
+        if (categoria == null) {
+            throw new DatoInvalidoException("Debe seleccionar una categoría.");
+        }
+        if (stockActual < 0) {
+            throw new DatoInvalidoException("El stock inicial no puede ser negativo.");
+        }
+        if (stockMinimo < 0) {
+            throw new DatoInvalidoException("El stock mínimo no puede ser negativo.");
+        }
     }
 
     /** Orden natural: alfabético por nombre, sin distinguir mayúsculas de minúsculas. */

@@ -6,13 +6,13 @@
 
     <groupId>com.sabordelsur</groupId>
     <artifactId>inventario-sabor-sur</artifactId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
 
     <name>Sistema de Gestion de Inventario y Reposicion - Distribuidora Sabor Sur S.R.L.</name>
     <description>
-        Prototipo Java del Trabajo Practico 3 (desarrollo en Java con programacion orientada a objetos) -
-        Seminario de Practica de Informatica - Universidad Siglo 21.
+        Proyecto integrador del Trabajo Practico 4 (interfaz grafica Swing, patron MVC + DAO, persistencia
+        MySQL, archivos CSV) - Seminario de Practica de Informatica - Universidad Siglo 21.
     </description>
 
     <properties>
@@ -29,7 +29,7 @@
             <version>8.0.33</version>
         </dependency>
 
-        <!-- JUnit 5 para las pruebas unitarias (modelo, estructuras de datos y algoritmos) -->
+        <!-- JUnit 5 para las pruebas unitarias y de integracion -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

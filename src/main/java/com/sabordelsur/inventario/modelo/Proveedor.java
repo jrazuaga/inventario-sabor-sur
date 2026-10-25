@@ -1,7 +1,9 @@
 package com.sabordelsur.inventario.modelo;
 
-/** Representa a cada proveedor con el que la distribuidora puede adquirir productos (UC-04, UC-05). */
-public class Proveedor {
+import com.sabordelsur.inventario.excepciones.DatoInvalidoException;
+
+/** Representa a cada proveedor con el que la distribuidora puede adquirir productos (UC-03, UC-04, UC-05). */
+public class Proveedor implements Validable {
 
     private int id;
     private String nombre;
@@ -38,6 +40,20 @@ public class Proveedor {
 
     public void setContacto(String contacto) {
         this.contacto = contacto;
+    }
+
+    /** UC-03: el nombre es obligatorio; el contacto es opcional pero tiene un largo máximo. */
+    @Override
+    public void validar() throws DatoInvalidoException {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new DatoInvalidoException("El nombre del proveedor es obligatorio.");
+        }
+        if (nombre.trim().length() > 100) {
+            throw new DatoInvalidoException("El nombre del proveedor admite hasta 100 caracteres.");
+        }
+        if (contacto != null && contacto.trim().length() > 150) {
+            throw new DatoInvalidoException("El contacto admite hasta 150 caracteres.");
+        }
     }
 
     @Override

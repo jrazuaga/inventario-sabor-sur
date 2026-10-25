@@ -1,12 +1,14 @@
 package com.sabordelsur.inventario.modelo;
 
+import com.sabordelsur.inventario.excepciones.DatoInvalidoException;
+
 import java.util.Comparator;
 
 /**
  * Clase asociativa entre Producto y Proveedor: representa la condición particular (precio, plazo de
  * entrega, disponibilidad) que un proveedor determinado ofrece para un producto determinado (UC-04, UC-05).
  */
-public class ProductoProveedor {
+public class ProductoProveedor implements Validable {
 
     /** Criterios de ordenamiento para comparar ofertas (UC-05). */
     public static final Comparator<ProductoProveedor> POR_PRECIO =
@@ -30,6 +32,20 @@ public class ProductoProveedor {
         this.precio = precio;
         this.plazoEntregaDias = plazoEntregaDias;
         this.disponible = disponible;
+    }
+
+    /** UC-04: una oferta necesita producto, proveedor, un precio positivo y un plazo no negativo. */
+    @Override
+    public void validar() throws DatoInvalidoException {
+        if (producto == null || proveedor == null) {
+            throw new DatoInvalidoException("La oferta debe indicar el producto y el proveedor.");
+        }
+        if (precio <= 0) {
+            throw new DatoInvalidoException("El precio debe ser mayor que cero.");
+        }
+        if (plazoEntregaDias < 0) {
+            throw new DatoInvalidoException("El plazo de entrega no puede ser negativo.");
+        }
     }
 
     public Producto getProducto() {

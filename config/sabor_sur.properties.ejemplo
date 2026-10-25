@@ -1,0 +1,7 @@
+# Datos de conexión a MySQL del Sistema de Gestión de Inventario y Reposición.
+# Copiar este archivo como "sabor_sur.properties" (en esta misma carpeta) y completar los valores.
+# Las variables de entorno SABOR_SUR_DB_URL, SABOR_SUR_DB_USER y SABOR_SUR_DB_PASSWORD, si existen,
+# tienen prioridad sobre este archivo.
+db.url=jdbc:mysql://localhost:3306/sabor_sur_db?useSSL=false&serverTimezone=UTC
+db.usuario=root
+db.contrasena=
