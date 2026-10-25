@@ -4,3 +4,8 @@ target/
 *.iml
 .vscode/
 .DS_Store
+
+# Archivos locales generados por la aplicación
+config/sabor_sur.properties
+logs/
+reportes/
