@@ -59,11 +59,17 @@ public class PanelProductos extends PanelBase {
         campoStockMinimo.setName("prod.stockMinimo");
 
         JButton nuevaCategoria = Estilo.boton("Nueva…", "prod.nuevaCategoria");
+        JButton renombrarCategoria = Estilo.boton("Renombrar…", "prod.renombrarCategoria");
         nuevaCategoria.addActionListener(e -> crearCategoria());
+        renombrarCategoria.addActionListener(e -> renombrarCategoria());
+        JPanel botonesCategoria = new JPanel(new GridLayout(1, 2, 4, 0));
+        botonesCategoria.setOpaque(false);
+        botonesCategoria.add(nuevaCategoria);
+        botonesCategoria.add(renombrarCategoria);
         JPanel filaCategoria = new JPanel(new BorderLayout(6, 0));
         filaCategoria.setOpaque(false);
         filaCategoria.add(comboCategoria, BorderLayout.CENTER);
-        filaCategoria.add(nuevaCategoria, BorderLayout.EAST);
+        filaCategoria.add(botonesCategoria, BorderLayout.EAST);
 
         JButton nuevo = Estilo.boton("Nuevo", "prod.nuevo");
         JButton guardar = Estilo.boton("Guardar", "prod.guardar");
@@ -181,6 +187,26 @@ public class PanelProductos extends PanelBase {
             cargarDatos();
             limpiar();
             informar("Producto eliminado: " + nombre + ".");
+        } catch (InventarioException e) {
+            mostrarError(e);
+        }
+    }
+
+    private void renombrarCategoria() {
+        Categoria categoria = (Categoria) comboCategoria.getSelectedItem();
+        if (categoria == null) {
+            return;
+        }
+        String nombre = (String) JOptionPane.showInputDialog(this, "Nuevo nombre para la categoría:",
+                "Renombrar categoría", JOptionPane.PLAIN_MESSAGE, null, null, categoria.getNombre());
+        if (nombre == null) {
+            return;
+        }
+        try {
+            String anterior = categoria.getNombre();
+            controlador.renombrarCategoria(categoria, nombre, usuario);
+            cargarDatos();
+            informar("Categoría renombrada: " + anterior + " pasa a llamarse " + categoria.getNombre() + ".");
         } catch (InventarioException e) {
             mostrarError(e);
         }

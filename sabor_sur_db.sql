@@ -1,7 +1,7 @@
 -- ============================================================
 -- Sistema de Gestión de Inventario y Reposición
 -- Distribuidora Sabor Sur S.R.L.
--- Script de base de datos MySQL — Trabajo Práctico 4 (versión final integradora)
+-- Script de base de datos MySQL, Trabajo Práctico 4 (versión final integradora)
 -- Alumno: Julián Azuaga
 --
 -- Cambios respecto del TP2:

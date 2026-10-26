@@ -57,6 +57,7 @@ public class VentanaPrincipal extends JFrame {
         getContentPane().add(crearBarraEstado(), BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(null);
+        setExtendedState(MAXIMIZED_BOTH);
         if (!paneles.isEmpty()) {
             paneles.get(0).refrescar();
         }

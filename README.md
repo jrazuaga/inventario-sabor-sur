@@ -1,4 +1,4 @@
-# Sistema de Gestión de Inventario y Reposición — Distribuidora Sabor Sur S.R.L.
+# Sistema de Gestión de Inventario y Reposición - Distribuidora Sabor Sur S.R.L.
 
 Proyecto integrador del **Trabajo Práctico 4** de Seminario de Práctica de Informática, Universidad Siglo 21
 (alumno: Julián Azuaga). Es la versión final del prototipo desarrollado en los TP2 y TP3: agrega la interfaz
@@ -29,7 +29,7 @@ inventario-sabor-sur/
     │   ├── estructuras/              (ColaEnlazada y PilaEnlazada, implementadas con nodos)
     │   ├── algoritmos/               (Ordenamiento: inserción y mezcla; Busqueda: binaria y lineal)
     │   └── seguridad/                (Hash: SHA-256 de las contraseñas)
-    └── test/java/...                 (76 pruebas JUnit 5: 70 unitarias y 6 de integración con MySQL)
+    └── test/java/...                 (77 pruebas JUnit 5: 71 unitarias y 6 de integración con MySQL)
 ```
 
 ## Requisitos

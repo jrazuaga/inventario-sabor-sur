@@ -67,4 +67,12 @@ class ControladorProductosTest {
     void categoriaSinNombreSeRechaza() {
         assertThrows(DatoInvalidoException.class, () -> controlador.crearCategoria(" ", actor));
     }
+
+    @Test
+    void renombrarCategoriaActualizaElNombre() throws Exception {
+        Categoria categoria = controlador.crearCategoria("Lacteos", actor);
+        controlador.renombrarCategoria(categoria, "Lácteos", actor);
+        assertEquals("Lácteos", categoria.getNombre());
+        assertEquals(1, categorias.actualizaciones);
+    }
 }

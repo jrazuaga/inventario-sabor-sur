@@ -60,4 +60,14 @@ public class ControladorProductos {
         bitacora.registrar(actor.getNombreUsuario(), "Alta de categoría: " + categoria.getNombre());
         return categoria;
     }
+
+    /** RF-01: cambia el nombre de una categoría existente. */
+    public void renombrarCategoria(Categoria categoria, String nuevoNombre, Usuario actor) throws InventarioException {
+        String anterior = categoria.getNombre();
+        Categoria cambiada = new Categoria(categoria.getId(), nuevoNombre == null ? null : nuevoNombre.trim());
+        cambiada.validar();
+        categoriaDAO.actualizar(cambiada);
+        categoria.setNombre(cambiada.getNombre());
+        bitacora.registrar(actor.getNombreUsuario(), "Categoría renombrada: " + anterior + " -> " + cambiada.getNombre());
+    }
 }
